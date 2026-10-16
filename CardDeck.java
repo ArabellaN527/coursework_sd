@@ -10,8 +10,9 @@ public class CardDeck {
     private final LinkedList<Card> Deck = new LinkedList<>();
     private final ReentrantLock lock = new ReentrantLock();
 //deck only needs to be identified by id 
-    public CardDeck(int deckId) {
+    public CardDeck(int deckId, LinkedList<Card> Deck) {
         this.deckId = deckId;
+        this.Deck = Deck;
     }
 /**draw action is threadsafe by locking deck before draw,
  * so only one player can use draw at once
