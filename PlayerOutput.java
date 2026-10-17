@@ -1,3 +1,74 @@
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 public class PlayerOutput {
+    private int PlayerID;
+    private String Filename;
+    private PrintWriter writer;
+    //create individual player output writing streams for each player
+    Public PlayerOutput(int PlayerID){
+        this.PlayerID = PlayerID;
+        this.Filename = "Player"+PlayerID+"_Output.txt";
+        //write to specifically the file for that player
+        try{
+            this.writer = new PrintWriter(new FileWriter(this.Filename,false));
+        }
+        catch(IOException inputError){
+            system.out.println("error creating file for "+PlayerID);
+            inputError.printStackTrace();
+        }
+    }
+    //start the log for the player at the begginning of each game
+    public void StartLog(List<Card> Hand){
+        if(writer!= null){
+            writer.println("Player "+PlayerID+" initial hand ");
+            printHand(Hand);
+        }
+    }
+    //log the cards moved for every turn 
+    public void logTurn(int CardDrawn,int CardDiscarded, List<Card> Hand, int leftDeck, int rightDeck){
+        if (writer!=null){
+            writer.println("Player "+PlayerID+" Draws a "+ CardDrawn +" from deck "+ rightDeck);
+            writer.println("Player "+PlayerID+" discards a"+ CardDrawn + " to deck " + leftDeck);
+            writer.println("Player "+PlayerID+" current hand ");
+            printHand(Hand);
 
+        }
+    }
+    // log winner in every player log
+   public void logWinnerNotification(List<Card> Hand, int WinningPlayerID){
+     if (writer!=null){
+            if (WinningPlayerID== PlayerID){
+                writer.println("Player "+PlayerID+" wins ");
+                writer.println("player "+PlayerID+" exits");
+                writer.println("Player "+PlayerID+" final hand: ");
+                printHand(Hand);
+            }
+            else{
+                println("Player "+ WinningPlayerID+" Has informed player "+ PlayerID+" that player "+WinningPlayerID+ " Has won");
+                writer.println("player "+PlayerID+" exits");
+                writer.println("Player "+PlayerID+" final hand: ");
+                printHand(Hand);
+            }
+        }
+   }
+   //to print the string of number from a hand
+   public void printHand(List<Card> Hand){
+    if(writer!= null && Hand!=null){
+        for(Card card: Hand){
+            writer.print(Card.getCardValue()+" ");
+        }
+        //create new line after printing hand and save to file
+        writer.println();
+        writer.flush();
+    }
+   }
+   //close player output after every loop to reduce resource use 
+   public void closePlayerOutput(){
+    if(writer!= null){
+        writer.close();
+    }
+   }
 }
+
+

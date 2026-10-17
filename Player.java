@@ -9,11 +9,11 @@ public class Player {
     private Deck rightDeck;
     private static AtomicBoolean GameOver = new AtomicBoolean(false);
     private final AtomicInteger WinningPlayerID;
-    private final PlayerOutput playerOutput;
     private final ReentrantLock Playerlock = new ReentrantLock();
+    private final PlayerOutput;
 
     public Player(int PlayerID,Deck leftDeck,Deck rightDeck,AtomicBoolean GameOver,
-                List<Card> Hand, AtomicInteger WinningPlayerID, PlayerOutput playerOutput){
+                List<Card> Hand, AtomicInteger WinningPlayerID, PlayerOutput playerOutput, String PlayerOutputFile){
         this.PlayerID = PlayerID;
         this.leftDeck = leftDeck;
         this.rightDeck=rightDeck;
@@ -21,15 +21,17 @@ public class Player {
         this.Hand = Hand;
         this.GameOver = GameOver;
         this.WinningPlayerID = WinningPlayerID;
-        this.playerOutput = playerOutput
+        this.playerOutput = playerOutput;
     }
 
     public getPlayerID(){
         return PlayerID;
     }
 
+
     @Override
     public void run(){
+        playerOutput.StartLog(Hand);
         try {
             if(HasWinningHand()){
                 HandleWin();
@@ -41,14 +43,14 @@ public class Player {
             }
             int Winner = WinningPlayerID.get();
             if (Winner != this.PlayerID) {
-                PlayerOutput.logPlayerNotification(PlayerID,Winner);
+                playerOutput.logWinnerNotification(Hand,Winner);
             }
         }
         //if there is an error with a single player stop that thread to keep threadsafe
         //use interrupt exception as the thread is stopping
         catch(InterruptedException PlayerError){
             Thread.currentThread().interrupt();
-            system.err.println("Player " + PlayerID +" error")
+            system.err.println("Player " + PlayerID +" error");
         }
 
 
@@ -70,18 +72,19 @@ public class Player {
         Hand.remove(discardedCard);
         leftDeck.discard(discardedCard);
 
-        PlayerOutput.logTurn(PlayerID,drawnCard,discardedCard);
+        playerOutput.logTurn(drawnCard.getCardValue(),discardedCard.getCardValue(),Hand,leftDeck.getDeckId(),rightDeck.getDeckId());
         if(HasWinningHand()){
             HandleWin();
         }
+        playerOutput.closePlayerOutput();
         Playerlock.unlock();
  
     }
     private void HandleWin(){
         if(GameOver.compareAndSet(false,true)){
             WinningPlayerID.set(this.PlayerID);//broadcast player id
-            system.out.println("Player ",PlayerID," wins")
-            PlayerOutput.logWin(PlayerID, Hand)
+            system.out.println("Player ",PlayerID," wins");
+            playerOutput.logWinnerNotification(Hand,PlayerID);
         }
     }
     private boolean HasWinningHand(){
