@@ -1,5 +1,5 @@
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.list;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Player {
@@ -19,7 +19,6 @@ public class Player {
         this.rightDeck=rightDeck;
         this.GameOver=GameOver;
         this.Hand = Hand;
-        this.GameOver = GameOver;
         this.WinningPlayerID = WinningPlayerID;
         this.playerOutput = playerOutput;
     }
