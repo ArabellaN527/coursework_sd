@@ -4,7 +4,7 @@ import java.beans.Transient;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.before;
+import org.junit.Before;
 import org.junit.Test;
 
 public class PlayerTest {
@@ -16,7 +16,7 @@ public class PlayerTest {
     private AtomicBoolean GameOver;
 
     @Before
-    void setUp() {
+    public void setUp() {
         left = new CardDeck(1, 16);
         right = new CardDeck(2, 16);
         GameOver = new AtomicBoolean(false);
@@ -26,7 +26,7 @@ public class PlayerTest {
 
     @Test
     public void getPlayerIDReturnsIID() {
-        assertEquals(1, player.getPlayerID)());
+        assertEquals(1, player.getPlayerID());
     }
 
     @Test(expected = IllegalStateException.class)

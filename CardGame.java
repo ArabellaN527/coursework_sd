@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class CardGame {
-    private List<Card> InitialDeck = new ArrayList<Card>;
+    private List<Card> InitialDeck = new ArrayList<Card>();
     private int numberPlayers;
 
     public static void initialiseGame(String filePath, int numberPlayers){
@@ -23,7 +23,7 @@ public class CardGame {
             distributeCards(InitialDeck, numberPlayers);
         }
         else{
-            System.out.println("input file length and number of players do not match")
+            System.out.println("input file length and number of players do not match");
         }
     }
     private static void distributeCards(List<Card> InitialDeck,int numberPlayers){

@@ -1,13 +1,15 @@
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
+import java.io.FilNotFoundException;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.*;
+import java.util.LinkedList;
 
 // the card deck is a linked list of card elements
 // the lock is for the DECK being threadsafe not the player hand
 public class CardDeck {
     private final int deckId;
-    private final LinkedList<Card> Deck = new LinkedList<>();
+    private LinkedList<Card> Deck = new LinkedList<>();
     private final ReentrantLock lock = new ReentrantLock();
 //deck only needs to be identified by id 
     public CardDeck(int deckId, LinkedList<Card> Deck) {

@@ -1,12 +1,13 @@
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 public class PlayerOutput {
     private int PlayerID;
     private String Filename;
     private PrintWriter writer;
     //create individual player output writing streams for each player
-    Public PlayerOutput(int PlayerID){
+    public PlayerOutput(int PlayerID){
         this.PlayerID = PlayerID;
         this.Filename = "Player"+PlayerID+"_Output.txt";
         //write to specifically the file for that player
@@ -14,7 +15,7 @@ public class PlayerOutput {
             this.writer = new PrintWriter(new FileWriter(this.Filename,false));
         }
         catch(IOException inputError){
-            system.out.println("error creating file for "+PlayerID);
+            System.out.println("error creating file for "+PlayerID);
             inputError.printStackTrace();
         }
     }
@@ -45,7 +46,7 @@ public class PlayerOutput {
                 printHand(Hand);
             }
             else{
-                println("Player "+ WinningPlayerID+" Has informed player "+ PlayerID+" that player "+WinningPlayerID+ " Has won");
+                writer.println("Player "+ WinningPlayerID+" Has informed player "+ PlayerID+" that player "+WinningPlayerID+ " Has won");
                 writer.println("player "+PlayerID+" exits");
                 writer.println("Player "+PlayerID+" final hand: ");
                 printHand(Hand);
@@ -56,7 +57,7 @@ public class PlayerOutput {
    public void printHand(List<Card> Hand){
     if(writer!= null && Hand!=null){
         for(Card card: Hand){
-            writer.print(Card.getCardValue()+" ");
+            writer.print(card.getCardValue()+" ");
         }
         //create new line after printing hand and save to file
         writer.println();

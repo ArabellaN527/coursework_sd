@@ -1,18 +1,21 @@
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.*;
 
-public class Player {
+
+public class Player implements Runnable {
     private final int PlayerID;
     private List<Card> Hand;
-    private Deck leftDeck;
-    private Deck rightDeck;
+    private CardDeck leftDeck;
+    private CardDeck rightDeck;
     private static AtomicBoolean GameOver = new AtomicBoolean(false);
     private final AtomicInteger WinningPlayerID;
     private final ReentrantLock Playerlock = new ReentrantLock();
-    private final PlayerOutput;
+    private PlayerOutput playerOutput;
 
-    public Player(int PlayerID,Deck leftDeck,Deck rightDeck,AtomicBoolean GameOver,
+    public Player(int PlayerID,CardDeck leftDeck,CardDeck rightDeck,AtomicBoolean GameOver,
                 List<Card> Hand, AtomicInteger WinningPlayerID, PlayerOutput playerOutput, String PlayerOutputFile){
         this.PlayerID = PlayerID;
         this.leftDeck = leftDeck;
@@ -20,10 +23,10 @@ public class Player {
         this.GameOver=GameOver;
         this.Hand = Hand;
         this.WinningPlayerID = WinningPlayerID;
-        this.playerOutput = playerOutput;
+        this.playerOutput = new PlayerOutput(PlayerID);
     }
 
-    public getPlayerID(){
+    public int getPlayerID(){
         return PlayerID;
     }
 
@@ -38,18 +41,19 @@ public class Player {
             }
             while(!GameOver.get()){
                 DrawAndDiscard();
-                thread.yield();
+                Thread.yield();
             }
             int Winner = WinningPlayerID.get();
             if (Winner != this.PlayerID) {
                 playerOutput.logWinnerNotification(Hand,Winner);
             }
         }
-        //if there is an error with a single player stop that thread to keep threadsafe
-        //use interrupt exception as the thread is stopping
-        catch(InterruptedException PlayerError){
-            Thread.currentThread().interrupt();
-            system.err.println("Player " + PlayerID +" error");
+        //if there is an error with a single player print which
+        catch (RuntimeException PlayerError) {
+        System.err.println("Player " + PlayerID + " error: " + PlayerError.getMessage());
+        } 
+        finally {
+        playerOutput.closePlayerOutput();   // always close the log file
         }
 
 
@@ -58,7 +62,7 @@ public class Player {
  * the time it holds 5 cards 
  * */
     private void DrawAndDiscard(){
-        if(GameOver()){
+        if(GameOver.get()){
             return;
         } // see if game over before attempting to draw next card
         Playerlock.lock();
@@ -82,7 +86,7 @@ public class Player {
     private void HandleWin(){
         if(GameOver.compareAndSet(false,true)){
             WinningPlayerID.set(this.PlayerID);//broadcast player id
-            system.out.println("Player ",PlayerID," wins");
+            System.out.println("Player "+PlayerID+" wins");
             playerOutput.logWinnerNotification(Hand,PlayerID);
         }
     }
@@ -103,7 +107,7 @@ public class Player {
             if(card.getCardValue() != PlayerID){
                 return card;
             }
-        }
+        //if all cards are the players preffered then the previous win logic has failed
+        }throw new IllegalStateException("Player "+PlayerID+" has no card to discard");
     }
-
 }
