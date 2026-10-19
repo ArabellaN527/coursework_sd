@@ -1,10 +1,11 @@
 import java.io.File;
-import java.io.FilNotFoundException;
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.*;
 
 public class CardGame {
-    private List<Card> InitialDeck = new ArrayList<Card>();
+    private static List<Card> InitialDeck = new ArrayList<Card>();
     private int numberPlayers;
 
     public static void initialiseGame(String filePath, int numberPlayers){
@@ -15,7 +16,7 @@ public class CardGame {
                 InitialDeck.add(new Card(cardValue));
             }
         }
-        catch(FilNotFoundException error){
+        catch(FileNotFoundException error){
             System.out.println("error file not found");
             return;
         }

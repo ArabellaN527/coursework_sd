@@ -66,19 +66,24 @@ public class Player implements Runnable {
             return;
         } // see if game over before attempting to draw next card
         Playerlock.lock();
-        //draw from right deck
-        Card drawnCard = rightDeck.draw();
-        Hand.add(drawnCard);
+        //draw from left deck
 
+        Card drawnCard = leftDeck.draw();
+        if (drawnCard == null){
+            return;
+        }
+        else{ //only draw and discard a card if there is one available
+        Hand.add(drawnCard);
+        
         // Choose which card to discard
         Card discardedCard = chooseDiscardCard();
         Hand.remove(discardedCard);
-        leftDeck.discard(discardedCard);
-
+        rightDeck.discard(discardedCard);
+        
         playerOutput.logTurn(drawnCard.getCardValue(),discardedCard.getCardValue(),Hand,leftDeck.getDeckId(),rightDeck.getDeckId());
         if(HasWinningHand()){
             HandleWin();
-        }
+        }}
         playerOutput.closePlayerOutput();
         Playerlock.unlock();
  

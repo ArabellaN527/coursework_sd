@@ -1,0 +1,6 @@
+Player 1 initial hand 
+1 2 3 4 
+Player 1 Draws a 1 from deck 2
+Player 1 discards a1 to deck 1
+Player 1 current hand 
+1 3 4 1 
