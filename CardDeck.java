@@ -11,7 +11,7 @@ public class CardDeck {
     private final int deckId;
     private LinkedList<Card> Deck = new LinkedList<>();
     private final ReentrantLock lock = new ReentrantLock();
-//deck only needs to be identified by id 
+//deck only needs to be identified by id
     public CardDeck(int deckId, LinkedList<Card> Deck) {
         this.deckId = deckId;
         this.Deck = Deck;
@@ -51,13 +51,7 @@ public class CardDeck {
     public ReentrantLock getLock() { 
         return lock; 
     }
-
-
-
-
-
-
-
-    
-
+    public LinkedList<Card> getCards(){
+        return this.Deck;
+    }//the output method needs to access the private contents of the deck
 }

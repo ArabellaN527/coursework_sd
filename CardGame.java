@@ -16,6 +16,7 @@ public class CardGame {
     private static List<Player> Players = new ArrayList<>();
     public static AtomicBoolean GameOver = new AtomicBoolean(false);
     private static AtomicInteger WinningPlayerID = new AtomicInteger();
+    private DeckOutput deckOutput;
 
     public static void initialiseGame(String filePath, int numberPlayers){
         InitialDeck.clear();
@@ -61,7 +62,7 @@ public class CardGame {
                 gameDecks.get(j).discard(CardToDeal);
             }}
             //create all the players and list them so they can be referenced in order
-        for(int i =1;i<=numberPlayers;i++){
+        for(int i =1;i<numberPlayers+1;i++){
             if(i<numberPlayers){
             Players.add(new Player(i,gameDecks.get(i-1),gameDecks.get(i),GameOver,
                     PlayerHands.get(i-1),WinningPlayerID,new PlayerOutput(i)));
@@ -115,6 +116,10 @@ public class CardGame {
             Thread.currentThread().interrupt();
             GameOver.set(true);
             //end game when threads are interrupted 
+        }
+        for(CardDeck deck: gameDecks){
+            DeckOutput deckOutput= new DeckOutput(deck);
+            deckOutput.closeDeckOutput();
         }
     }
     
