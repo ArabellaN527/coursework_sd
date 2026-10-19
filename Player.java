@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.*;
 
-
+//runnable allows to be run on threads 
 public class Player implements Runnable {
     private final int PlayerID;
     private List<Card> Hand;
@@ -16,7 +16,7 @@ public class Player implements Runnable {
     private PlayerOutput playerOutput;
 
     public Player(int PlayerID,CardDeck leftDeck,CardDeck rightDeck,AtomicBoolean GameOver,
-                List<Card> Hand, AtomicInteger WinningPlayerID, PlayerOutput playerOutput, String PlayerOutputFile){
+                List<Card> Hand, AtomicInteger WinningPlayerID, PlayerOutput playerOutput){
         this.PlayerID = PlayerID;
         this.leftDeck = leftDeck;
         this.rightDeck=rightDeck;
@@ -24,6 +24,7 @@ public class Player implements Runnable {
         this.Hand = Hand;
         this.WinningPlayerID = WinningPlayerID;
         this.playerOutput = new PlayerOutput(PlayerID);
+        //each player starts its own output file
     }
 
     public int getPlayerID(){
@@ -32,13 +33,14 @@ public class Player implements Runnable {
 
 
     @Override
+    //the player logic for when the game is running 
     public void run(){
         playerOutput.StartLog(Hand);
-        try {
+        try {//first check if any player was dealt the winning hand 
             if(HasWinningHand()){
                 HandleWin();
                 return;
-            }
+            }//each player plays untill a thread notifies them through game over that they have won
             while(!GameOver.get()){
                 DrawAndDiscard();
                 Thread.yield();
@@ -53,19 +55,19 @@ public class Player implements Runnable {
         System.err.println("Player " + PlayerID + " error: " + PlayerError.getMessage());
         } 
         finally {
-        playerOutput.closePlayerOutput();   // always close the log file
+        playerOutput.closePlayerOutput();   // always close the log file at the end of run
         }
 
 
     }
-/**the player object is locked when draw + dicard so no other thread can interrupt it during 
+/**the player object is locked when draw + discard so no other thread can interrupt it during 
  * the time it holds 5 cards 
  * */
     private void DrawAndDiscard(){
         if(GameOver.get()){
             return;
         } // see if game over before attempting to draw next card
-        Playerlock.lock();
+        Playerlock.lock();//cannot be interrupted during draw and discard
         //draw from left deck
 
         Card drawnCard = leftDeck.draw();
@@ -84,12 +86,12 @@ public class Player implements Runnable {
         if(HasWinningHand()){
             HandleWin();
         }}
-        playerOutput.closePlayerOutput();
         Playerlock.unlock();
  
     }
-    private void HandleWin(){
+    private void HandleWin(){//only allow handle win if the gameover hasnt already been changed by another thread 
         if(GameOver.compareAndSet(false,true)){
+        //using atomic compareand set prevents other players attempting to declare a win at the same time
             WinningPlayerID.set(this.PlayerID);//broadcast player id
             System.out.println("Player "+PlayerID+" wins");
             playerOutput.logWinnerNotification(Hand,PlayerID);
@@ -98,12 +100,12 @@ public class Player implements Runnable {
     private boolean HasWinningHand(){
         if(Hand.size()!=4){ 
             return false;
-        }
+        }//player should never have >4 cards 
         int First = Hand.get(0).getCardValue();
         for(Card card: Hand){
             if (card.getCardValue() != First){
                 return false;
-            }}
+            }}//false claim if anycards are different
         return true;
     }
     private Card chooseDiscardCard(){

@@ -30,7 +30,7 @@ public class PlayerOutput {
     public void logTurn(int CardDrawn,int CardDiscarded, List<Card> Hand, int leftDeck, int rightDeck){
         if (writer!=null){
             writer.println("Player "+PlayerID+" Draws a "+ CardDrawn +" from deck "+ rightDeck);
-            writer.println("Player "+PlayerID+" discards a"+ CardDrawn + " to deck " + leftDeck);
+            writer.println("Player "+PlayerID+" discards a "+ CardDiscarded + " to deck " + leftDeck);
             writer.println("Player "+PlayerID+" current hand ");
             printHand(Hand);
 

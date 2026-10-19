@@ -22,7 +22,7 @@ public class PlayerTest {
         GameOver = new AtomicBoolean(false);
         WinningPlayerID = new AtomicInteger(0); // 0 = no winner ID yet (players are 1-4)
         hand = new ArrayList<Card>();
-        player = new Player(1, left, right, GameOver, hand, WinningPlayerID, new PlayerOutput(1), "Player1_output.txt");
+        player = new Player(1, left, right, GameOver, hand, WinningPlayerID, new PlayerOutput(1));
     }
 
     private void deal(int a, int b, int c, int d) {

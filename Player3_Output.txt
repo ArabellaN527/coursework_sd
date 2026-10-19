@@ -1,0 +1,14 @@
+Player 3 initial hand 
+1 2 3 4 
+Player 3 Draws a 6 from deck 4
+Player 3 discards a 1 to deck 3
+Player 3 current hand 
+2 3 4 6 
+Player 3 Draws a 3 from deck 4
+Player 3 discards a 2 to deck 3
+Player 3 current hand 
+3 4 6 3 
+Player 2 Has informed player 3 that player 2 Has won
+player 3 exits
+Player 3 final hand: 
+3 4 6 3 
