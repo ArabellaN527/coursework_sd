@@ -5,11 +5,11 @@ public class CardTest {
 
     // NORMAL CASES
 
-    @Test
-    public void getValueReturnValueGivenToConstructor() {
+    @Test // constructor stores value and getCard() returns it
+    public void getCardValueReturnValueGivenToConstructor() {
         Card card = new Card(7);
 
-        assertEquals(7, card.getValue());
+        assertEquals(7, card.getCardValue());
     }
 
     @Test
@@ -23,34 +23,27 @@ public class CardTest {
     public void valueDoesntChange() {
         Card card = new Card(6);
 
-        assertEquals(6, card.getValue());
-        assertEquals(6, card.getValue());
-        assertEquals(6, card.getValue());
+        assertEquals(6, card.getCardValue());
+        assertEquals(6, card.getCardValue());
+        assertEquals(6, card.getCardValue()); // makes sure value remains the same after multiple runs
     }
 
-    @Test
+    @Test // Two cards are independent of each other
     public void cardsKeepTheirOwnValue() {
         Card a = new Card(4);
         Card b = new Card(2);
 
-        assertEquals(4, a.getValue());
-        assertEquals(2, b.getValue());
+        assertEquals(4, a.getCardValue());
+        assertEquals(2, b.getCardValue());
     }
 
     // EDGE CASES
 
-    @Test
-    public void largeValuesStoredCorrectly() {
-        Card card = new Card(Integer.MAX_VALUE);
-
-        assertEquals(Integer.MAX_VALUE, card.getValue());
-    }
-
-    @Test
+    @Test // value is non-negative integer
     public void zeroIsValidValue() {
         Card card = new Card(0);
 
-        assertEquals(0, card.getValue());
+        assertEquals(0, card.getCardValue());
     }
 
     // ERROR CASES

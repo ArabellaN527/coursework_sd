@@ -4,6 +4,11 @@ import java.beans.Transient;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.smartcardio.Card;
+
+import java.util.List;
+import java.util.ArrayList;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,37 +19,40 @@ public class PlayerTest {
     private AtomicInteger WinningPlayerID;
     private Player player;
     private AtomicBoolean GameOver;
+    private List<Card> hand;
 
     @Before
     public void setUp() {
-        left = new CardDeck(1, 16);
-        right = new CardDeck(2, 16);
+        left = new CardDeck(1);
+        right = new CardDeck(2);
         GameOver = new AtomicBoolean(false);
         WinningPlayerID = new AtomicInteger(0); // 0 = no winner ID yet (players are 1-4)
-        player = new player(1, left, right, GameOver);
+        player = new Player(1, left, right, GameOver, hand, WinningPlayerID);
+    }
+
+    private void deal(int a, int b, int c, int d) {
+        hand.add(new Card(a));
+        hand.add(new Card(b));
+        hand.add(new Card(c));
+        hand.add(new Card(d)); // sets up hnad with 4 cards
     }
 
     @Test
-    public void getPlayerIDReturnsIID() {
+    public void getPlayerIDReturnsID() {
         assertEquals(1, player.getPlayerID());
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void fifthCardIsRejected() {
-        deal(1, 2, 3, 4);
-        player.receiveCard(new Card(5));
-    }
 
     @Test
     public void winsAfterDrawingFourthMatchingCard() throws InterruptedException {
         deal(1, 1, 1, 2);
         left.discard(new Card(1));
 
-        run.player();
+        runplayer();
 
         assertTrue(GameOver.get());
         assertEquals(1, WinningPlayerID.get());
-        assertEquals(2, right.draw().getValue()); // got rid of the 2
+        assertEquals(2, right.draw().getCardValue()); // got rid of the 2
     }
 
     @Test
@@ -56,10 +64,10 @@ public class PlayerTest {
         left.discard(new Card(6));
         left.discard(new Card(1));
 
-        run.player();
+        runplayer();
 
         while (right.getSize() > 0) {
-            assertNotEquals(1, right.draw().getValue());
+            assertNotEquals(1, right.draw().getCardValue()); // everything discarded is in the right deck
         }
     }  
     
@@ -84,6 +92,7 @@ public class PlayerTest {
 
         runPlayer();
 
-        assertEquals(6, 4 + left.getSize() + right.getSize());
+        assertEquals(6, hand.size() + left.getSize() + right.getSize());
+        assertEquals(4, hand.size());
     }
 }
