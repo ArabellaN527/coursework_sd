@@ -1,7 +1,6 @@
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import java.util.concurrent.*;
 import java.util.concurrent.locks.*;
 import java.util.LinkedList;
 
