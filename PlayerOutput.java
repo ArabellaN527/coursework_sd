@@ -29,7 +29,7 @@ public class PlayerOutput {
     //log the cards moved for every turn 
     public void logTurn(int CardDrawn,int CardDiscarded, List<Card> Hand, int leftDeck, int rightDeck){
         if (writer!=null){
-            writer.println("Player "+PlayerID+" Draws a "+ CardDrawn +" from deck "+ leftDeck);
+            writer.println("Player "+PlayerID+" draws a "+ CardDrawn +" from deck "+ leftDeck);
             writer.println("Player "+PlayerID+" discards a "+ CardDiscarded + " to deck " + rightDeck);
             writer.println("Player "+PlayerID+" current hand ");
             printHand(Hand);
@@ -40,15 +40,15 @@ public class PlayerOutput {
    public void logWinnerNotification(List<Card> Hand, int WinningPlayerID){
      if (writer!=null){
             if (WinningPlayerID== PlayerID){
-                writer.println("Player "+PlayerID+" wins ");
-                writer.println("player "+PlayerID+" exits");
-                writer.println("Player "+PlayerID+" final hand: ");
+                writer.println("Player "+PlayerID+" wins");
+                writer.println("Player "+PlayerID+" exits");
+                writer.println("Player "+PlayerID+" final hand:");
                 printHand(Hand);
             }
             else{
-                writer.println("Player "+ WinningPlayerID+" Has informed player "+ PlayerID+" that player "+WinningPlayerID+ " Has won");
-                writer.println("player "+PlayerID+" exits");
-                writer.println("Player "+PlayerID+" final hand: ");
+                writer.println("Player "+ WinningPlayerID+" has informed player "+ PlayerID+" that player "+WinningPlayerID+ " has won");
+                writer.println("Player "+PlayerID+" exits");
+                writer.println("Player "+PlayerID+" final hand:");
                 printHand(Hand);
             }
         }

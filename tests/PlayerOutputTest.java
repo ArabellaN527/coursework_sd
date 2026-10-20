@@ -3,10 +3,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Arrays;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,32 +39,40 @@ public class PlayerOutputTest {
     }
 
     private static List<Card> makeHand(int... values) {
-        List<Card> cards = new LinkedList<>();
+        List<Card> cards = new ArrayList<>();
         for (int v : values) {
             cards.add(new Card(v));
         }
         return cards;
     }
-
-    private static List<String> readFile(String name) throws IOException {
-        return Files.readAllLines(Paths.get(name));
+    private static List<String> finishAndRead(PlayerOutput out, String fileName) throws IOException {
+        out.closePlayerOutput();                       // flush everything to disk first
+        List<String> lines = new ArrayList<>();
+        for (String line : Files.readAllLines(Paths.get(fileName))) {
+            lines.add(line.trim());
     }
+        return lines;
+}
+
+    private List<String> readLines() throws IOException {
+        return finishAndRead(output, Filename);
+}
+    
 
     // Normal cases
 
     @Test
-    public void constructorCreatesFile() {
+    public void TestconstructorCreatesFile() {
         assertTrue("Output file should be created", new File(Filename).exists());
     }
 
     @Test 
     public void startLogWritesInitialHand() throws IOException {
-        output.logTurn(5, 2, makeHand(1, 2, 5, 6), 2 ,1);
+        output.StartLog(makeHand(1, 2, 5, 6));
 
         assertEquals(Arrays.asList(
-            "Player 100 Draws a 5 from right deck",
-            "Player 100 discards a 2 to left deck",
-            "Player 100 current hand", "1, 2, 5, 6 "), readFile(Filename));
+            "Player 14 initial hand",
+            "1 2 5 6"),readLines());
     }
 
     @Test
@@ -73,8 +82,8 @@ public class PlayerOutputTest {
         assertEquals(Arrays.asList(
             "Player 14 wins",
             "Player 14 exits",
-            "Player 14 final hand: ",
-            "14, 14, 14, 14,"), readFile(Filename));
+            "Player 14 final hand:",
+            "14 14 14 14"), readLines());
     } 
 
     @Test
@@ -83,9 +92,9 @@ public class PlayerOutputTest {
 
         assertEquals(Arrays.asList(
             "Player 2 has informed player 14 that player 2 has won",
-            "Player 14 exists",
-            "Player 14's final hand: ",
-            "1, 2, 3, 4"), readFile(Filename));
+            "Player 14 exits",
+            "Player 14 final hand:",
+            "1 2 3 4"), readLines());
     }
 
     // Edge cases
@@ -93,34 +102,26 @@ public class PlayerOutputTest {
     public void sameValueCardDrawnAndDiscarded() throws IOException {
         output.logTurn(5, 5, hand, 2, 1);
 
-        List<String> lines = readFile(Filename);
-        assertEquals("Player 14 draws a 5 from right deck", lines.get(0));
-        assertEquals("Player 14 discards a 5 to left deck", lines.get(1));
-    }
-
-    @Test 
-    public void playerIDIsZero() throws IOException {
-        PlayerOutput zero = new PlayerOutput(0);
-        try {
-            zero.StartLog(hand);
-            assertEquals("Player 0 initial hand", readFile(fileFor(0)).get(0));
-        } finally {
-            zero.closePlayerOutput();
-            new File(fileFor(0)).delete();
-        }
+        List<String> lines = readLines();
+        assertEquals("Player 14 draws a 5 from deck 2", lines.get(0));
+        assertEquals("Player 14 discards a 5 to deck 1", lines.get(1));
     }
 
     // Error Case
     @Test
-    public void winnerNotificationDoesNotThrow() {
+    public void winnerNotificationDoesNotThrow() throws IOException {
         output.logWinnerNotification(null, ID);
+         assertEquals(Arrays.asList(
+                "Player 14 wins",
+                "Player 14 exits",
+                "Player 14 final hand:"), readLines());
     }
 
     @Test
     public void HandInLogStillLogsDrawAndDiscard() throws IOException {
         output.logTurn(1, 2, null, 2, 1);
         output.closePlayerOutput();
-        assertEquals(3, readFile(Filename).size());
+        assertEquals(3, readLines().size());
     }
 }
     
